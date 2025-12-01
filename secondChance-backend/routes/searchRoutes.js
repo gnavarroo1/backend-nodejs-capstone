@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
 
-// Search for gifts
+// Search for secondChanceItems
 router.get('/', async (req, res, next) => {
     try {
         // Task 1: Connect to MongoDB using connectToDatabase database. Remember to use the await keyword and store the connection in `db`
-        // {{insert code here}}
-
-        const collection = db.collection("gifts");
+        const db = await connectToDatabase();
+        const collection = db.collection("secondChanceItems");
 
         // Initialize the query object
         let query = {};
@@ -20,20 +19,19 @@ router.get('/', async (req, res, next) => {
 
         // Task 3: Add other filters to the query
         if (req.query.category) {
-            // {{insert code here}}
+            query.category = req.query.category;
         }
         if (req.query.condition) {
-            // {{insert code here}} 
+            query.condition = req.query.condition; 
         }
-        if (req.query.age_years) {
-            // {{insert code here}}
+        if (req.query.age_years) {            
             query.age_years = { $lte: parseInt(req.query.age_years) };
         }
 
         // Task 4: Fetch filtered gifts using the find(query) method. Make sure to use await and store the result in the `gifts` constant
-        // {{insert code here here}}
+        const secondChanceItems = await collection.find(query).toArray();
 
-        res.json(gifts);
+        res.json(secondChanceItems);
     } catch (e) {
         next(e);
     }
