@@ -78,7 +78,6 @@ router.post('/register', registerValidation, async (req, res) => {
     // Task 8: Return the user email and token as JSON
     return res.json({ authtoken, email });
   } catch (e) {
-    logger.error({ err: e }, 'Internal server error in /register');
     return res.status(500).send('Internal server error');
   }
 });
