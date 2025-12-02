@@ -1,23 +1,23 @@
-/*jshint esversion: 8 */
-const express = require("express")
+const express = require('express')
 const router = express.Router()
-const connectToDatabase = require("../models/db")
-require("dotenv").config()
+const connectToDatabase = require('../models/db')
+require('dotenv').config()
 
 // Search for secondChanceItems
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const db = await connectToDatabase()
-    const collection = db.collection("secondChanceItems")
+    const collection = db.collection('secondChanceItems')
 
-    let query = {}
+    const query = {}
 
-    if (req.query.name && req.query.name.trim() !== "") {
+    if (req.query.name && req.query.name.trim() !== '') {
       query.name = {
         $regex: req.query.name,
-        $options: "i"
+        $options: 'i'
       }
     }
+
     if (req.query.category) {
       query.category = req.query.category
     }
@@ -26,7 +26,7 @@ router.get("/", async (req, res, next) => {
     }
     if (req.query.age_years) {
       query.age_years = {
-        $lte: parseInt(req.query.age_years),
+        $lte: parseInt(req.query.age_years)
       }
     }
     const secondChanceItems = await collection.find(query).toArray()

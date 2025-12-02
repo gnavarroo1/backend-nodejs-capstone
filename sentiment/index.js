@@ -1,10 +1,10 @@
-require("dotenv").config()
-const express = require("express")
-const logger = require("./logger")
-const expressPino = require("express-pino-logger")({
-  logger,
+require('dotenv').config()
+const express = require('express')
+const logger = require('./logger')
+const expressPino = require('express-pino-logger')({
+  logger
 })
-const natural = require("natural")
+const natural = require('natural')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -13,32 +13,32 @@ app.use(express.json())
 app.use(expressPino)
 
 // Define the sentiment analysis route
-app.post("sentiment", async (req, res) => {
+app.post('sentiment', async (req, res) => {
   const { sentence } = req.query
   if (!sentence) {
-    logger.error("No sentence provided")
+    logger.error('No sentence provided')
     return res.status(400).json({
-      error: "No sentence provided"
+      error: 'No sentence provided'
     })
   }
 
-  // Initialize the sentiment analyzer with the Natural's PorterStemmer and "English" language
+  // Initialize the sentiment analyzer with the Natural's PorterStemmer and 'English' language
   const Analyzer = natural.SentimentAnalyzer
   const stemmer = natural.PorterStemmer
-  const analyzer = new Analyzer("English", stemmer, "afinn")
+  const analyzer = new Analyzer('English', stemmer, 'afinn')
 
   // Perform sentiment analysis
   try {
-    const analysisResult = analyzer.getSentiment(sentence.split(" "))
+    const analysisResult = analyzer.getSentiment(sentence.split(' '))
 
-    let sentiment = "neutral"
+    let sentiment = 'neutral'
 
     if (analysisResult < 0) {
-      sentiment = "negative"
+      sentiment = 'negative'
     } else if (analysisResult >= 0 && analysisResult <= 0.33) {
-      sentiment = "neutral"
+      sentiment = 'neutral'
     } else {
-      sentiment = "positive"
+      sentiment = 'positive'
     }
 
     logger.info(`Sentiment analysis result: ${analysisResult}`)
@@ -50,7 +50,7 @@ app.post("sentiment", async (req, res) => {
   } catch (error) {
     logger.error(`Error performing sentiment analysis: ${error}`)
     res.status(500).json({
-      message: "Error performing sentiment analysis"
+      message: 'Error performing sentiment analysis'
     })
   }
 })
