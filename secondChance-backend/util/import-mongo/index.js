@@ -17,7 +17,6 @@ async function loadData() {
   const client = new MongoClient(url)
 
   try {
-    // Connect to the MongoDB client
     await client.connect()
     console.log("Connected successfully to server")
 
