@@ -9,10 +9,8 @@ const connectToDatabase = require("../models/db")
 const dotenv = require("dotenv")
 // Import Pino logger
 const pino = require("pino")
-
 // Step 1 - Task 3: Create a Pino logger instance
 const logger = pino()
-
 dotenv.config()
 
 // Step 1 - Task 4: Create JWT secret
@@ -23,7 +21,7 @@ const registerValidation = [
   body("email").isEmail().withMessage("Valid email required"),
   body("password")
     .isLength({
-      min: 6,
+      min: 6
     })
     .withMessage("Password must be at least 6 characters"),
   body("firstName")
@@ -35,7 +33,7 @@ const registerValidation = [
     .isString()
     .trim()
     .notEmpty()
-    .withMessage("Last name is required"),
+    .withMessage("Last name is required")
 ]
 
 // /register endpoint
@@ -45,7 +43,7 @@ router.post("/register", registerValidation, async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        errors: errors.array(),
+        errors: errors.array()
       })
     }
 
@@ -57,17 +55,17 @@ router.post("/register", registerValidation, async (req, res) => {
     const db = await connectToDatabase()
     const collection = db.collection("users")
     const existingEmail = await collection.findOne({
-      email: req.body.email,
+      email: req.body.email
     })
     if (existingEmail) {
       logger.warn(
         {
-          email: req.body.email,
+          email: req.body.email
         },
         "Email already registered"
       )
       return res.status(400).json({
-        error: "Email already registered",
+        error: "Email already registered"
       })
     }
     const salt = await bcryptjs.genSalt(10)
@@ -79,19 +77,19 @@ router.post("/register", registerValidation, async (req, res) => {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       password: hash,
-      createdAt: new Date(),
+      createdAt: new Date()
     })
 
     const payload = {
       user: {
-        id: newUser.insertedId,
-      },
+        id: newUser.insertedId
+      }
     }
     const authtoken = jwt.sign(payload, JWT_SECRET)
     logger.info("User registered successfully")
     return res.json({
       authtoken,
-      email,
+      email
     })
   } catch (e) {
     return res.status(500).send("Internal server error")
@@ -109,7 +107,7 @@ router.post("/login", async (req, res) => {
     const db = await connectToDatabase()
     const collection = db.collection("users")
     const theUser = await collection.findOne({
-      email: req.body.email,
+      email: req.body.email
     })
 
     if (theUser) {
@@ -117,13 +115,13 @@ router.post("/login", async (req, res) => {
       if (!result) {
         logger.error("Passwords do not match")
         return res.status(404).json({
-          error: "Wrong pasword",
+          error: "Wrong pasword"
         })
       }
       let payload = {
         user: {
-          id: theUser._id.toString(),
-        },
+          id: theUser._id.toString()
+        }
       }
       const userName = theUser.firstName
       const userEmail = theUser.email
@@ -132,18 +130,18 @@ router.post("/login", async (req, res) => {
       return res.status(200).json({
         authtoken,
         userName,
-        userEmail,
+        userEmail
       })
     } else {
       logger.error("User not found")
       return res.status(404).json({
-        error: "User not found",
+        error: "User not found"
       })
     }
   } catch (e) {
     logger.error(
       {
-        err: e,
+        err: e
       },
       "Internal server error in /login"
     )
@@ -161,7 +159,7 @@ router.put(
       if (!errors.isEmpty()) {
         logger.error("Validation errors in update request", errors.array())
         return res.status(400).json({
-          errors: errors.array(),
+          errors: errors.array()
         })
       }
 
@@ -174,23 +172,23 @@ router.put(
       if (!email) {
         logger.error("Email not found in the request headers")
         return res.status(400).json({
-          error: "Email not found in the request headers",
+          error: "Email not found in the request headers"
         })
       }
       const db = await connectToDatabase()
       const collection = db.collection("users")
       const existingUser = await collection.findOne({
-        email,
+        email
       })
       if (!existingUser) {
         logger.error(
           {
-            email,
+            email
           },
           "User not found for update"
         )
         return res.status(404).json({
-          error: "User not found",
+          error: "User not found"
         })
       }
 
@@ -199,13 +197,13 @@ router.put(
 
       const result = await collection.findOneAndUpdate(
         {
-          email,
+          email
         },
         {
-          $set: existingUser,
+          $set: existingUser
         },
         {
-          returnDocument: "after",
+          returnDocument: "after"
         }
       )
 
@@ -213,14 +211,14 @@ router.put(
 
       const payload = {
         user: {
-          id: updatedUser._id.toString(),
+          id: updatedUser._id.toString()
         },
       }
       const authtoken = jwt.sign(payload, JWT_SECRET)
 
       logger.info(
         {
-          email,
+          email
         },
         "User profile updated successfully"
       )
@@ -232,7 +230,7 @@ router.put(
     } catch (e) {
       logger.error(
         {
-          err: e,
+          err: e
         },
         "Internal server error in /update"
       )

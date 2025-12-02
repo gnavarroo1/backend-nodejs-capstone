@@ -18,7 +18,7 @@ app.post("sentiment", async (req, res) => {
   if (!sentence) {
     logger.error("No sentence provided")
     return res.status(400).json({
-      error: "No sentence provided",
+      error: "No sentence provided"
     })
   }
 
@@ -45,12 +45,12 @@ app.post("sentiment", async (req, res) => {
 
     res.status(200).json({
       sentimentScore: analysisResult,
-      sentiment: sentiment,
+      sentiment: sentiment
     })
   } catch (error) {
     logger.error(`Error performing sentiment analysis: ${error}`)
     res.status(500).json({
-      message: "Error performing sentiment analysis",
+      message: "Error performing sentiment analysis"
     })
   }
 })

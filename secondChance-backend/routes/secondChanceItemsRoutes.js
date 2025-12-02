@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname) // Use the original file name
-  },
+  }
 })
 const upload = multer({
   storage: storage
@@ -54,7 +54,7 @@ router.post('/', upload.single('file'), async (req, res, next) => {
 // Get a single secondChanceItem by ID
 router.get('/:id', async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const id = req.params.id
     const db = await connectToDatabase()
     const collection = db.collection('secondChanceItems')
     const secondChanceItem = await collection.findOne({
@@ -72,6 +72,7 @@ router.get('/:id', async (req, res, next) => {
 // Update and existing item
 router.put('/:id', async (req, res, next) => {
   try {
+    const id = req.params.id
     const db = await connectToDatabase()
     const collection = db.collection('secondChanceItems')
     const secondChanceItem = await collection.findOne({
@@ -115,6 +116,7 @@ router.put('/:id', async (req, res, next) => {
 // Delete an existing item
 router.delete('/:id', async (req, res, next) => {
   try {
+    const id = req.params.id
     const db = await connectToDatabase()
     const collection = db.collection('secondChanceItems')
     const secondChanceItem = await collection.findOne({

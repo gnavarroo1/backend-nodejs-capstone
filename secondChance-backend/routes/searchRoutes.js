@@ -15,10 +15,9 @@ router.get("/", async (req, res, next) => {
     if (req.query.name && req.query.name.trim() !== "") {
       query.name = {
         $regex: req.query.name,
-        $options: "i",
+        $options: "i"
       }
     }
-
     if (req.query.category) {
       query.category = req.query.category
     }
